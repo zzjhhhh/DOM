@@ -127,6 +127,7 @@ dom.siblings = function(node) {
 dom.next = function(node) {
   let x = node.nextSibling
   while (x && x.nodeType === 3) {
+    //寻找是 elementNode 的 sibling
     x = x.nextSibling
   }
   return x

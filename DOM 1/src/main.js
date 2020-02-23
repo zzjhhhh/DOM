@@ -1,4 +1,4 @@
-const div = dom.create("<div>newDiv</div>")
+const div = dom.create("<div>newDiv1</div>")
 console.log(div)
 
 dom.after(div, test)
