@@ -126,7 +126,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-window.jQuery = function (selectorOrArrayOrTemplate) {
+window.$ = window.jQuery = function (selectorOrArrayOrTemplate) {
   var elements;
 
   if (typeof selectorOrArrayOrTemplate === "string") {
@@ -145,145 +145,151 @@ window.jQuery = function (selectorOrArrayOrTemplate) {
     return container.content.firstChild;
   }
 
-  return {
-    jquery: true,
+  var api = Object.create(jQuery.prototype);
+  Object.assign(api, {
     elements: elements,
-    get: function get(index) {
-      return elements[index];
-    },
-    appendTo: function appendTo(node) {
-      if (node instanceof Element) {
-        this.each(function (e1) {
-          return node.appendChild(e1);
-        });
-      } else if (node.jquery === true) {
-        this.each(function (e1) {
-          return node.get(0).appendChild(e1);
-        });
-      }
-    },
-    append: function append(children) {
-      var _this = this;
-
-      if (children instanceof Element) {
-        this.get(0).appendChild(children);
-      } else if (children instanceof HTMLAllCollection) {
-        for (var i = 0; i < children.length; i++) {
-          this.get(0).appendChild(children[i]);
-        }
-      } else if (children.jquery === true) {
-        children.each(function (node) {
-          return _this.get(0).appendChild(node);
-        });
-      }
-    },
-    find: function find(selector) {
-      var arr = [];
-
-      for (var i = 0; i < elements.length; i++) {
-        arr = arr.concat(Array.from(elements[i].querySelectorAll(selector)));
-      }
-
-      arr.old = this; // 保存旧的jQuery对象
-
-      return jQuery(arr);
-    },
-    each: function each(fn) {
-      for (var i = 0; i < elements.length; i++) {
-        fn(elements[i], i);
-      }
-
-      return this;
-    },
-    parent: function parent() {
-      var arr = [];
-      this.each(function (node) {
-        if (arr.indexOf(node.parentNode) === -1) {
-          arr.push(node.parentNode);
-        }
-      });
-      return jQuery(arr);
-    },
-    children: function children() {
-      var arr = [];
-      this.each(function (node) {
-        arr.push.apply(arr, _toConsumableArray(node.children));
-      });
-      return jQuery(arr);
-    },
-    // ???
-    siblings: function siblings() {
-      var arr = [];
-      this.each(function (node) {
-        var array = node.parentNode.children;
-
-        for (var i = 0; i < array.length; i++) {
-          if (array[i] !== node) {
-            arr.push(array[i]);
-          }
-        }
-      });
-      return jQuery(arr);
-    },
-    index: function index() {
-      var arr = [];
-      this.each(function (node) {
-        var array = node.parentNode.children;
-        var i;
-
-        for (i = 0; i < array.length; i++) {
-          if (node === array[i]) {
-            break;
-          }
-        }
-
-        arr.push(i);
-      });
-      return jQuery(arr);
-    },
-    next: function next() {
-      var arr = [];
-      this.each(function (node) {
-        var cur = node.nextSibling;
-
-        while (cur && cur.nodeType === 3) {
-          cur = cur.nextSibling;
-        }
-
-        arr.push(cur);
-      });
-      return jQuery(arr);
-    },
-    pre: function pre() {
-      var arr = [];
-      this.each(function (node) {
-        var cur = node.previousSibling;
-
-        while (cur && cur.nodeType === 3) {
-          cur = cur.previousSibling;
-        }
-
-        arr.push(cur);
-      });
-      return jQuery(arr);
-    },
-    print: function print() {
-      console.log(elements);
-    },
-    addClass: function addClass(className) {
-      for (var i = 0; i < elements.length; i++) {
-        elements[i].classList.add(className);
-      }
-
-      return this;
-    },
-    end: function end() {
-      return this.old;
-    },
     old: selectorOrArrayOrTemplate.old
-  };
+  });
+  return api;
 };
-},{}],"../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+jQuery.prototype = {
+  constructor: jQuery,
+  jquery: true,
+  get: function get(index) {
+    return this.elements[index];
+  },
+  appendTo: function appendTo(node) {
+    if (node instanceof Element) {
+      this.each(function (e1) {
+        return node.appendChild(e1);
+      });
+    } else if (node.jquery === true) {
+      this.each(function (e1) {
+        return node.get(0).appendChild(e1);
+      });
+    }
+  },
+  append: function append(children) {
+    var _this = this;
+
+    if (children instanceof Element) {
+      this.get(0).appendChild(children);
+    } else if (children instanceof HTMLAllCollection) {
+      for (var i = 0; i < children.length; i++) {
+        this.get(0).appendChild(children[i]);
+      }
+    } else if (children.jquery === true) {
+      children.each(function (node) {
+        return _this.get(0).appendChild(node);
+      });
+    }
+  },
+  find: function find(selector) {
+    var arr = [];
+
+    for (var i = 0; i < this.elements.length; i++) {
+      arr = arr.concat(Array.from(this.elements[i].querySelectorAll(selector)));
+    }
+
+    arr.old = this; // 保存旧的jQuery对象
+
+    return jQuery(arr);
+  },
+  each: function each(fn) {
+    for (var i = 0; i < this.elements.length; i++) {
+      fn(this.elements[i], i);
+    }
+
+    return this;
+  },
+  parent: function parent() {
+    var arr = [];
+    this.each(function (node) {
+      if (arr.indexOf(node.parentNode) === -1) {
+        arr.push(node.parentNode);
+      }
+    });
+    return jQuery(arr);
+  },
+  children: function children() {
+    var arr = [];
+    this.each(function (node) {
+      arr.push.apply(arr, _toConsumableArray(node.children));
+    });
+    return jQuery(arr);
+  },
+  // ???
+  siblings: function siblings() {
+    var arr = [];
+    this.each(function (node) {
+      var array = node.parentNode.children;
+
+      for (var i = 0; i < array.length; i++) {
+        if (array[i] !== node) {
+          arr.push(array[i]);
+        }
+      }
+    });
+    return jQuery(arr);
+  },
+  index: function index() {
+    var arr = [];
+    this.each(function (node) {
+      var array = node.parentNode.children;
+      var i;
+
+      for (i = 0; i < array.length; i++) {
+        if (node === array[i]) {
+          break;
+        }
+      }
+
+      arr.push(i);
+    });
+    return jQuery(arr);
+  },
+  next: function next() {
+    var arr = [];
+    this.each(function (node) {
+      var cur = node.nextSibling;
+
+      while (cur && cur.nodeType === 3) {
+        cur = cur.nextSibling;
+      }
+
+      arr.push(cur);
+    });
+    return jQuery(arr);
+  },
+  pre: function pre() {
+    var arr = [];
+    this.each(function (node) {
+      var cur = node.previousSibling;
+
+      while (cur && cur.nodeType === 3) {
+        cur = cur.previousSibling;
+      }
+
+      arr.push(cur);
+    });
+    return jQuery(arr);
+  },
+  print: function print() {
+    console.log(this.elements);
+  },
+  addClass: function addClass(className) {
+    for (var i = 0; i < this.elements.length; i++) {
+      this.elements[i].classList.add(className);
+    }
+
+    return this;
+  },
+  end: function end() {
+    return this.old;
+  }
+};
+},{}],"../../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -311,7 +317,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64842" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52513" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -487,5 +493,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js","jQuery.js"], null)
+},{}]},{},["../../../../../../../.config/yarn/global/node_modules/parcel/src/builtins/hmr-runtime.js","jQuery.js"], null)
 //# sourceMappingURL=/jQuery.5c69adcb.js.map
